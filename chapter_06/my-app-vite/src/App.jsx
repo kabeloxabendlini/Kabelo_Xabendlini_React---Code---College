@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import UserForm from './UserForm';
+import React, { Component } from "react";
+import UserForm from "./UserForm";
 
 class App extends Component {
-  render() {        
+  render() {
     return (
       <div>
-        <UserForm />        
-                
+        <h1>My App</h1>
+        <UserForm />
       </div>
     );
   }
 }
 
 export default App;
-
 //import Products from './Products';

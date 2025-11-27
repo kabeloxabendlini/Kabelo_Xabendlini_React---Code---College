@@ -1,42 +1,70 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* Center everything in the App container */
+.App {
   text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212; /* dark background */
+  color: #f5f5f5;            /* light text for contrast */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2rem;
+  box-sizing: border-box;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* Logo animation and styling */
+.App-logo {
+  height: 100px; /* slightly bigger logo */
+  animation: App-logo-spin infinite 20s linear;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease-in-out;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.App-logo:hover {
+  transform: scale(1.1) rotate(360deg); /* subtle hover effect */
+  filter: drop-shadow(0 0 15px #61dafb);
+}
+
+/* Header styling */
+.App-header {
+  width: 100%;
+  background-color: #1e1e1e;
+  padding: 2rem;
+  border-radius: 12px;
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Intro text styling */
+.App-intro {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+  color: #e0e0e0;
+}
+
+/* Spin animation */
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .App-header {
+    padding: 1rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .App-logo {
+    height: 70px;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .App-intro {
+    font-size: 1rem;
+    padding: 0 1rem;
   }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
 }

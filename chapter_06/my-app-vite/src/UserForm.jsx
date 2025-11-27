@@ -1,63 +1,80 @@
-import React, { Component } from 'react';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import React, { Component } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Button, Form as RBForm } from "react-bootstrap";
 
 class UserForm extends Component {
-  constructor(props){
-    super(props);  
-  }
-  
-  render(){
-    return(
-      <div>
-          <h1>Any place in your app!</h1>
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            validate={values => {
-              let errors = {};
-              if (!values.email) {
-                errors.email = 'Required';
-              } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-              ) {
-                errors.email = 'Invalid email address';
-              }
-              else if (values.email.length < 10) {
-                errors.email = 'Email address too short';
-              } 
-              
-              if (!values.password) {
-                errors.password = 'Required';
-              }
-              else if (values.password.length < 8) {
-                errors.password = 'Password too short';
-              }                            
-              return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-              setTimeout(() => {
-                alert(JSON.stringify(values, null, 2));
-                setSubmitting(false);
-              }, 400);
-            }}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <Field type="email" name="email" />
-                <span style={{ color:"red", fontWeight: "bold" }}>
-                  <ErrorMessage name="email" component="div" />
-                </span>                               
-                <Field type="password" name="password" />
-                <span style={{ color:"red", fontWeight: "bold" }}>
-                  <ErrorMessage name="password" component="div" />
-                </span>                
-                <button type="submit" disabled={isSubmitting}>
-                  Submit
-                </button>
-              </Form>
-            )}
-          </Formik>
-        </div>      
-    )    
+  render() {
+    return (
+      <div className="p-3 border rounded bg-light">
+        <Formik
+          initialValues={{ email: "", password: "" }}
+          validate={(values) => {
+            const errors = {};
+
+            if (!values.email) {
+              errors.email = "Required";
+            } else if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = "Invalid email format";
+            } else if (values.email.length < 10) {
+              errors.email = "Email too short";
+            }
+
+            if (!values.password) {
+              errors.password = "Required";
+            } else if (values.password.length < 8) {
+              errors.password = "Password must be at least 8 characters";
+            }
+
+            return errors;
+          }}
+          onSubmit={(values, { setSubmitting }) => {
+            setTimeout(() => {
+              alert(JSON.stringify(values, null, 2));
+              setSubmitting(false);
+            }, 400);
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+
+              {/* EMAIL */}
+              <RBForm.Group className="mb-3">
+                <RBForm.Label>Email</RBForm.Label>
+                <Field
+                  type="email"
+                  name="email"
+                  as={RBForm.Control}
+                  placeholder="Enter email"
+                />
+                <div className="text-danger mt-1 fw-bold">
+                  <ErrorMessage name="email" />
+                </div>
+              </RBForm.Group>
+
+              {/* PASSWORD */}
+              <RBForm.Group className="mb-3">
+                <RBForm.Label>Password</RBForm.Label>
+                <Field
+                  type="password"
+                  name="password"
+                  as={RBForm.Control}
+                  placeholder="Enter password"
+                />
+                <div className="text-danger mt-1 fw-bold">
+                  <ErrorMessage name="password" />
+                </div>
+              </RBForm.Group>
+
+              <Button variant="primary" type="submit" disabled={isSubmitting}>
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    );
   }
 }
 
