@@ -1,31 +1,51 @@
 import React, { Component } from 'react';
 import { FormGroup, ControlLabel, FormControl, HelpBlock, Button, Alert } from 'react-bootstrap';
 
+/*
+  UserForm Component
+  ------------------
+  This is a login form that collects a username, password, and a role selection.
+  It performs validation on username and password fields and provides immediate
+  feedback to the user. It also handles form submission and login simulation.
+*/
 class UserForm extends Component {
 
+  // Properties to store error messages for username and password
   errorUsername;
   errorPassword;
+
+  // Predefined roles for the role selection dropdown
   roles = ['Read', 'Write', 'Administrator'];    
 
   constructor(props){
     super(props);
 
+    // Initialize error messages
     this.errorUsername = '';
     this.errorPassword = '';
 
+    // Component state
     this.state = {
-      username: '',
-      password: '',
-      usernameTouched: false,
-      passwordTouched: false,
-      errorLogin: false // put errorlogin as state because we want form to be re-rendered.
+      username: '',           // User input for username
+      password: '',           // User input for password
+      usernameTouched: false, // Tracks if username field was touched
+      passwordTouched: false, // Tracks if password field was touched
+      errorLogin: false       // Indicates invalid login attempts
     };  
     
+    // Bind event handlers
     this.handleChange = this.handleChange.bind(this);  
     this.handleBlur = this.handleBlur.bind(this);    
     this.handleSubmit = this.handleSubmit.bind(this);    
   } 
 
+  /*
+    Validation for username field
+    -----------------------------
+    - Required
+    - Minimum 3 characters
+    - No spaces allowed
+  */
   getUserNameValidationState() {    
     const length = this.state.username.length;
 
@@ -49,6 +69,11 @@ class UserForm extends Component {
     }    
   }
 
+  /*
+    Validation for password field
+    -----------------------------
+    - Minimum 3 characters
+  */
   getPasswordValidationState() {    
     const length = this.state.password.length;
 
@@ -58,6 +83,12 @@ class UserForm extends Component {
     }
   }
 
+  /*
+    Handle blur event
+    -----------------
+    Marks the field as touched when user leaves the input field
+    to trigger validation messages
+  */
   handleBlur(e){
     const target = e.target;    
     const name = target.name;        
@@ -66,6 +97,11 @@ class UserForm extends Component {
     });    
   }
 
+  /*
+    Handle change event
+    -------------------
+    Updates state as the user types
+  */
   handleChange(e) {
     const target = e.target;   
     const value = target.value;
@@ -76,13 +112,23 @@ class UserForm extends Component {
     });
   }  
 
+  /*
+    Handle form submission
+    ----------------------
+    - Prevents submission if validation fails
+    - Simulates login check
+    - Shows alert if login is successful
+  */
   handleSubmit(event) { 
     this.errorLogin = false; 
+
+    // Prevent submission if form is invalid
     if (!this.canBeSubmitted()) {      
       event.preventDefault();
       return;
     }
     else {     
+      // Simulated login check
       if(!this.login(this.state.username,this.state.password)){  
         this.setState({
           errorLogin: true
@@ -91,7 +137,8 @@ class UserForm extends Component {
         event.preventDefault();        
         return;
       }                
-      // actual submit logic...    
+
+      // Successful submission
       this.setState({
         errorLogin: false
       });       
@@ -99,6 +146,13 @@ class UserForm extends Component {
     }          
   }  
 
+  /*
+    Simulated login function
+    ------------------------
+    Accepts only:
+      username: "jason"
+      password: "123"
+  */
   login(username, password){       
     if(username === "jason" && password === "123")
         return true; 
@@ -106,6 +160,11 @@ class UserForm extends Component {
         return false;
   }  
   
+  /*
+    Check if form can be submitted
+    -------------------------------
+    Ensures both fields are touched and valid
+  */
   canBeSubmitted() {    
     return (
       this.state.usernameTouched && this.state.passwordTouched 
@@ -114,13 +173,16 @@ class UserForm extends Component {
   }  
 
   render() {    
+    // Generate dropdown options for roles
     const listRoles = this.roles.map((role) => 
       <option value="select">{role}</option>
     );    
-    const isEnabled = this.canBeSubmitted();
+    const isEnabled = this.canBeSubmitted(); // Determines if submit button is enabled
 
     return (
       <form onSubmit={this.handleSubmit}>
+
+        {/* Username field */}
         <FormGroup
           controlId="formBasicText"
           validationState={this.getUserNameValidationState()}
@@ -139,6 +201,8 @@ class UserForm extends Component {
             <HelpBlock>{this.errorUsername}</HelpBlock>
           }                              
         </FormGroup>
+
+        {/* Password field */}
         <FormGroup
           controlId="formBasicText"
           validationState={this.getPasswordValidationState()}
@@ -155,6 +219,8 @@ class UserForm extends Component {
           <FormControl.Feedback />
           <HelpBlock></HelpBlock>
         </FormGroup>
+
+        {/* Role selection dropdown */}
         <FormGroup controlId="formControlsSelect">
             <ControlLabel>Select Role</ControlLabel>
             <FormControl componentClass="select" placeholder="select" name="role">                              
@@ -163,14 +229,19 @@ class UserForm extends Component {
               <option value="other">...</option>
             </FormControl>
         </FormGroup>            
+
+        {/* Submit button */}
         <Button type="submit" disabled={!isEnabled}>
           Submit
         </Button>    
+
+        {/* Error message alert */}
         { this.state.errorLogin &&             
             <Alert bsStyle="danger">
-              <strong>Error</strong>Username or password is invalid.
+              <strong>Error:</strong> Username or password is invalid.
             </Alert>            
         }                   
+
       </form>
     );
   }

@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
 import Products from './Products';
-import { Row, Container } from 'react-bootstrap'; // Import Row & Container
+import { Row, Container } from 'react-bootstrap'; // Import Bootstrap layout components
 
 class App extends Component {
   render() {
     return (
+      // Main container to center content and add top margin
       <Container className="mt-4">
-        {/* Wrap in a Row for proper Bootstrap grid alignment */}
+        
+        {/* Row for proper Bootstrap grid alignment */}
         <Row className="mb-4 align-items-center">
-          <Products />  {/* Render all products here */}
+          
+          {/* Render the Products component inside the row */}
+          <Products />
+          
         </Row>
       </Container>
     );
@@ -16,5 +21,3 @@ class App extends Component {
 }
 
 export default App;
-
-
