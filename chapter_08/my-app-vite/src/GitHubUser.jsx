@@ -1,40 +1,87 @@
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
-import { useParams, useNavigate } from 'react-router-dom';
-
-// Wrapper to inject params and navigate into class component
-function withRouter(Component) {
-  return props => {
-    const params = useParams();
-    const navigate = useNavigate();
-    return <Component {...props} params={params} navigate={navigate} />;
-  };
-}
+import axios from 'axios';
+import './App.css';
 
 class GitHubUser extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      repos: [],
+      isLoading: false,
+      error: null,
+    };
     this.handleClick = this.handleClick.bind(this);
   }
 
+  componentDidMount() {
+    this.fetchUserRepos();
+  }
+
+  fetchUserRepos() {
+    const { login } = this.props.match.params;
+    const encodedLogin = encodeURIComponent(login);
+
+    this.setState({ isLoading: true, error: null });
+
+    axios
+      .get(`https://api.github.com/users/${encodedLogin}/repos`)
+      .then(res => {
+        this.setState({
+          repos: res.data,
+          isLoading: false,
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        this.setState({
+          isLoading: false,
+          error: 'Could not fetch repositories. Maybe the user has none or does not exist.',
+        });
+      });
+  }
+
   handleClick() {
-    // navigate back to /github
-    this.props.navigate('/github');
+    this.props.history.push('/github');
   }
 
   render() {
-    const { login, id } = this.props.params;
+    const { login, id } = this.props.match.params;
+    const { repos, isLoading, error } = this.state;
 
     return (
-      <div>
-        <h1>User Login: {login}</h1>
-        <h2>User Id: {id}</h2>
-        <Button variant="primary" onClick={this.handleClick}>
-          Go to GitHub Users
+      <div className="container">
+        <h1 className="mb-2">GitHub User: {login}</h1>
+        <h2 className="mb-4">ID: {id}</h2>
+
+        <Button variant="secondary" onClick={this.handleClick} className="mb-4">
+          ← Back to Users
         </Button>
+
+        {isLoading && <p>Loading repositories...</p>}
+        {error && <p className="text-danger">{error}</p>}
+
+        {!isLoading && !error && repos.length === 0 && <p>No repositories found.</p>}
+
+        <div className="repo-grid">
+          {repos.map(repo => (
+            <div key={repo.id} className="repo-card">
+              <h5>{repo.name}</h5>
+              <p>{repo.description || 'No description provided.'}</p>
+              <a
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="repo-link"
+              >
+                View on GitHub
+              </a>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 }
 
-export default withRouter(GitHubUser);
+export default GitHubUser;

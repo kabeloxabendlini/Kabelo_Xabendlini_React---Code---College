@@ -1,65 +1,71 @@
-import React, { Component } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import GitHub from './GitHub';
-import GitHubUser from './GitHubUser';
+import React, { useState } from 'react';
+import axios from 'axios';
+import ReactLoading from 'react-loading';
+import { Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import './App.css';
 
-class App extends Component {
-  render() {
-    return <Header />;
-  }
-}
+export default function GitHub() {
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-export default App;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+    setIsLoading(true);
+    setError(null);
 
-class Header extends Component {
-  render() {
-    return (
-      <BrowserRouter>
-        <Navbar bg="light" expand="lg">
-          <Container>
-            <Navbar.Brand as={Link} to="/">React-Redux GitHub</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link as={Link} to="/">Home</Nav.Link>
-                <Nav.Link as={Link} to="/github">GitHub</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
-        </Navbar>
+    try {
+      const encodedTerm = encodeURIComponent(searchTerm);
+      const res = await axios.get(`https://api.github.com/search/users?q=${encodedTerm}`);
+      setData(res.data.items);
+    } catch (err) {
+      console.error(err);
+      setError('Error fetching GitHub users. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        <Container style={{ marginTop: '20px' }}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/github" element={<GitHub />} />
-            <Route path="/github/user/:login/:id" element={<GitHubUser />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Container>
-      </BrowserRouter>
-    );
-  }
-}
+  return (
+    <div>
+      <Form className="d-flex mb-4" onSubmit={handleSubmit}>
+        <Form.Control
+          type="text"
+          placeholder="Enter GitHub username"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="me-2"
+        />
+        <Button type="submit" variant="dark">
+          Search
+        </Button>
+      </Form>
 
-class Home extends Component {
-  render() {
-    return (
-      <div>
-        <h2>Welcome to React-Redux GitHub Search</h2>
-        <p>Use the GitHub menu to search for users.</p>
+      {isLoading && <ReactLoading type="spinningBubbles" color="#444" className="mx-auto" />}
+      {error && <p className="text-danger">{error}</p>}
+
+      <div className="user-grid">
+        {data.length > 0 ? (
+          data.map((user) => (
+            <div key={user.id} className="user-card">
+              <img src={user.avatar_url} alt={user.login} className="avatar" />
+              <h5>{user.login}</h5>
+              <Link to={`/github/user/${user.login}/${user.id}`}>
+                <Button variant="primary" className="repo-btn">
+                  View Repos
+                </Button>
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p>No users found.</p>
+        )}
       </div>
-    );
-  }
+    </div>
+  );
 }
 
-class NotFound extends Component {
-  render() {
-    return (
-      <div>
-        <h2>404 - Page Not Found</h2>
-        <p>The page you requested does not exist.</p>
-      </div>
-    );
-  }
-}
+// serve assets; see
