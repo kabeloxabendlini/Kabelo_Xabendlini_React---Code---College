@@ -8,10 +8,15 @@ function App() {
   return (
     <BrowserRouter>
       <header className="App-header">
+        <h1>React-Bootstrap:</h1>
         <h1>GitHub Explorer</h1>
         <nav>
+          <div className= "nav-links">
+          <div className= "nav-links">
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/github" className="nav-link">GitHub</Link>
+        </div>
+        </div>
         </nav>
       </header>
 

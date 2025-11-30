@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import axios from 'axios';
 import './App.css';
+import { withRouter } from './withRouter';   // <-- import wrapper
 
 class GitHubUser extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class GitHubUser extends Component {
   }
 
   fetchUserRepos() {
-    const { login } = this.props.match.params;
+    const { login } = this.props.router.params;
     const encodedLogin = encodeURIComponent(login);
 
     this.setState({ isLoading: true, error: null });
@@ -36,17 +37,17 @@ class GitHubUser extends Component {
         console.error(err);
         this.setState({
           isLoading: false,
-          error: 'Could not fetch repositories. Maybe the user has none or does not exist.',
+          error: 'Could not fetch repositories.',
         });
       });
   }
 
   handleClick() {
-    this.props.history.push('/github');
+    this.props.router.navigate('/github');
   }
 
   render() {
-    const { login, id } = this.props.match.params;
+    const { login, id } = this.props.router.params;
     const { repos, isLoading, error } = this.state;
 
     return (
@@ -61,19 +62,16 @@ class GitHubUser extends Component {
         {isLoading && <p>Loading repositories...</p>}
         {error && <p className="text-danger">{error}</p>}
 
-        {!isLoading && !error && repos.length === 0 && <p>No repositories found.</p>}
+        {!isLoading && !error && repos.length === 0 && (
+          <p>No repositories found.</p>
+        )}
 
         <div className="repo-grid">
           {repos.map(repo => (
             <div key={repo.id} className="repo-card">
               <h5>{repo.name}</h5>
               <p>{repo.description || 'No description provided.'}</p>
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="repo-link"
-              >
+              <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
                 View on GitHub
               </a>
             </div>
@@ -84,4 +82,4 @@ class GitHubUser extends Component {
   }
 }
 
-export default GitHubUser;
+export default withRouter(GitHubUser);

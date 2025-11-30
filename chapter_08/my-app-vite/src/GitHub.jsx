@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import ReactLoading from 'react-loading';
+import { ClipLoader } from "react-spinners";
 import { Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './App.css';
+import { withRouter } from "./withRouter";
 
 export default function GitHub() {
   const [data, setData] = useState([]);
@@ -30,42 +31,45 @@ export default function GitHub() {
   };
 
   return (
-    <div>
-      <Form className="d-flex mb-4" onSubmit={handleSubmit}>
-        <Form.Control
-          type="text"
-          placeholder="Enter GitHub username"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="me-2"
-        />
-        <Button type="submit" variant="dark">
-          Search
-        </Button>
-      </Form>
+  <div>
+    <Form className="d-flex mb-4" onSubmit={handleSubmit}>
+      <Form.Control
+        type="text"
+        placeholder="Enter GitHub username"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="me-2"
+      />
+      <Button type="submit" variant="dark">
+        Search
+      </Button>
+    </Form>
 
-      {isLoading && <ReactLoading type="spinningBubbles" color="#444" className="mx-auto" />}
-      {error && <p className="text-danger">{error}</p>}
-
-      <div className="user-grid">
-        {data.length > 0 ? (
-          data.map((user) => (
-            <div key={user.id} className="user-card">
-              <img src={user.avatar_url} alt={user.login} className="avatar" />
-              <h5>{user.login}</h5>
-              <Link to={`/github/user/${user.login}/${user.id}`}>
-                <Button variant="primary" className="repo-btn">
-                  View Repos
-                </Button>
-              </Link>
-            </div>
-          ))
-        ) : (
-          <p>No users found.</p>
-        )}
+    {isLoading && (
+      <div className="text-center my-4">
+        <ClipLoader size={60} />
       </div>
-    </div>
-  );
-}
+    )}
 
-// serve assets; see
+    {error && <p className="text-danger">{error}</p>}
+
+    <div className="user-grid">
+      {data.length > 0 ? (
+        data.map((user) => (
+          <div key={user.id} className="user-card">
+            <img src={user.avatar_url} alt={user.login} className="avatar" />
+            <h5>{user.login}</h5>
+            <Link to={`/github/user/${user.login}/${user.id}`}>
+              <Button variant="primary" className="repo-btn">
+                View Repos
+              </Button>
+            </Link>
+          </div>
+        ))
+      ) : (
+        <p>No users found.</p>
+      )}
+    </div>
+  </div>
+);
+}
