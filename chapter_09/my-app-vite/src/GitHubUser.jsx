@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
-import axios from 'axios';
-import './App.css';
-import { withRouter } from './withRouter';   // <-- import wrapper
-import * as firebase from 'firebase'; 
+import React, { Component } from "react";
+import { Button } from "react-bootstrap";
+import axios from "axios";
+import "./App.css";
+import { withRouter } from "./withRouter"; // React Router v6 wrapper
 
 class GitHubUser extends Component {
   constructor(props) {
     super(props);
-    console.log(firebase); 
+
     this.state = {
       repos: [],
       isLoading: false,
       error: null,
     };
+
     this.handleClick = this.handleClick.bind(this);
   }
 
@@ -29,23 +29,23 @@ class GitHubUser extends Component {
 
     axios
       .get(`https://api.github.com/users/${encodedLogin}/repos`)
-      .then(res => {
+      .then((res) => {
         this.setState({
           repos: res.data,
           isLoading: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
         this.setState({
           isLoading: false,
-          error: 'Could not fetch repositories.',
+          error: "Could not fetch repositories.",
         });
       });
   }
 
   handleClick() {
-    this.props.router.navigate('/github');
+    this.props.router.navigate("/github");
   }
 
   render() {
@@ -57,7 +57,11 @@ class GitHubUser extends Component {
         <h1 className="mb-2">GitHub User: {login}</h1>
         <h2 className="mb-4">ID: {id}</h2>
 
-        <Button variant="secondary" onClick={this.handleClick} className="mb-4">
+        <Button
+          variant="secondary"
+          onClick={this.handleClick}
+          className="mb-4"
+        >
           ← Back to Users
         </Button>
 
@@ -69,11 +73,15 @@ class GitHubUser extends Component {
         )}
 
         <div className="repo-grid">
-          {repos.map(repo => (
+          {repos.map((repo) => (
             <div key={repo.id} className="repo-card">
               <h5>{repo.name}</h5>
-              <p>{repo.description || 'No description provided.'}</p>
-              <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+              <p>{repo.description || "No description provided."}</p>
+              <a
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 View on GitHub
               </a>
             </div>

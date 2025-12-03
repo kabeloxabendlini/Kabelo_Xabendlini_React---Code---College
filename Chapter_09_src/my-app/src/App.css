@@ -1,0 +1,85 @@
+/* App container */
+.App {
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  min-height: 100vh;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 2rem;
+}
+
+/* Logo animation */
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 120px;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 0 10px #fff);
+}
+
+/* Header styling */
+.App-header {
+  background: linear-gradient(90deg, #ff416c, #ff4b2b);
+  width: 100%;
+  max-width: 1280px;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* Intro text */
+.App-intro {
+  font-size: 1.3rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 15px 25px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  margin-bottom: 2rem;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Button styling */
+button {
+  background: linear-gradient(90deg, #f7971e, #ffd200);
+  border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+  color: #222;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Spinning animation */
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Make links vibrant */
+a {
+  color: #ffeb3b;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #00fff7;
+}

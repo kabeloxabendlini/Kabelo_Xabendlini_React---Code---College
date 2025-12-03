@@ -1,0 +1,139 @@
+/* Base body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(135deg, #ff6ec4, #7873f5);
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  transition: background 0.5s ease;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #ffeb3b;
+  color: #222;
+}
+
+/* App container */
+.App {
+  text-align: center;
+  width: 100%;
+}
+
+/* Logo with animation */
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 100px;
+  margin-bottom: 1rem;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Header */
+.App-header {
+  background-color: rgba(0, 0, 0, 0.6);
+  height: 180px;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 4px solid #ffeb3b;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Intro text */
+.App-intro {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Buttons */
+button {
+  background: linear-gradient(90deg, #ff6ec4, #7873f5);
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 5px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+/* Table styles */
+table {
+  width: 90%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+}
+
+thead {
+  background: linear-gradient(90deg, #ff6ec4, #7873f5);
+  color: #fff;
+  font-weight: 600;
+}
+
+td, th {
+  padding: 12px 15px;
+  text-align: center;
+}
+
+tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+}
+
+/* Modal */
+.modal-content {
+  background: rgba(50, 50, 50, 0.95);
+  color: #fff;
+  border-radius: 12px;
+}
+
+.modal-header, .modal-footer {
+  border: none;
+}
+
+.modal-title {
+  font-weight: 700;
+}
+
+.modal-body p {
+  font-size: 1.2rem;
+}
+
+
