@@ -1,121 +1,119 @@
 // src/User.js
 import React, { useEffect, useState } from "react";
-import { ref, get, remove } from "firebase/database";
-import { db } from "./firebaseConfig"; // Ensure db is exported from firebaseConfig.js
-import { Link, useNavigate } from "react-router-dom";
-import { Table, Button, Modal } from "react-bootstrap";
-import "./User.css"; // We'll style it here
+import { ref, onValue, remove } from "firebase/database";
+import { db } from "./firebaseConfig";
+import { useNavigate } from "react-router-dom";
+import { Container, Table, Button, Modal } from "react-bootstrap";
 
-function User() {
-  const [users, setUsers] = useState([]);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedUser, setSelectedUser] = useState({});
+const User = () => {
   const navigate = useNavigate();
+  const [users, setUsers] = useState({});
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
+  // Fetch users
   useEffect(() => {
-    const fetchUsers = async () => {
-      const snapshot = await get(ref(db, "/"));
-      const data = snapshot.val();
-      if (data) {
-        const userList = Object.keys(data).map((key) => ({
-          key,
-          ...data[key],
-        }));
-        setUsers(userList);
-      }
-    };
-    fetchUsers();
+    const usersRef = ref(db, "/");
+    onValue(usersRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      setUsers(data);
+    });
   }, []);
 
-  const handleAdd = () => navigate("/add");
-
-  const openDeleteDialog = (user) => {
-    setSelectedUser(user);
-    setShowDeleteDialog(true);
+  // Delete user
+  const confirmDelete = (id) => {
+    setUserToDelete(id);
+    setShowDeleteModal(true);
   };
 
-  const handleDelete = async () => {
-    try {
-      await remove(ref(db, "/" + selectedUser.key));
-      setUsers(users.filter((u) => u.key !== selectedUser.key));
-      setShowDeleteDialog(false);
-    } catch (error) {
-      alert("Could not delete user.");
-      console.error(error);
-    }
+  const deleteUser = async () => {
+    await remove(ref(db, "/" + userToDelete));
+    setShowDeleteModal(false);
   };
 
   return (
-    <div className="users-container">
-      <div className="header-section">
-        <h1 className="users-title">User Management</h1>
-        <Button className="add-button" onClick={handleAdd}>
+    <Container className="mt-5">
+
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1 className="fw-bold">User Management</h1>
+
+        <Button variant="success" className="px-4 py-2 shadow"
+          onClick={() => navigate("/add-user")}
+        >
           + Add User
         </Button>
       </div>
 
-      <Table striped hover bordered responsive className="users-table">
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.length === 0 ? (
+      {/* Users Table */}
+      <div className="p-4 shadow-lg rounded bg-white">
+        <Table striped bordered hover responsive>
+          <thead className="table-dark">
             <tr>
-              <td colSpan="4" style={{ textAlign: "center" }}>
-                No users found.
-              </td>
+              <th>#</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th style={{ width: "180px" }}>Actions</th>
             </tr>
-          ) : (
-            users.map((user) => (
-              <tr key={user.key}>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>
-                  <Link to={`/edit/${user.key}`} className="edit-link">
-                    Edit
-                  </Link>
-                </td>
-                <td>
-                  <Button
-                    className="delete-button"
-                    onClick={() => openDeleteDialog(user)}
-                  >
-                    Remove
-                  </Button>
+          </thead>
+          <tbody>
+            {Object.keys(users).length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-4">
+                  No users found
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </Table>
+            ) : (
+              Object.entries(users).map(([id, user], index) => (
+                <tr key={id}>
+                  <td>{index + 1}</td>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>
+                    <Button
+                      variant="primary"
+                      className="me-2"
+                      onClick={() => navigate(`/edit-user/${id}`)}
+                    >
+                      Edit
+                    </Button>
 
-      <Modal
-        show={showDeleteDialog}
-        onHide={() => setShowDeleteDialog(false)}
-        centered
-      >
+                    <Button
+                      variant="danger"
+                      onClick={() => confirmDelete(id)}
+                    >
+                      Delete
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </Table>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Delete User</Modal.Title>
+          <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
-          Are you sure you want to delete <strong>{selectedUser.username}</strong>?
+          <p className="fs-5">Are you sure you want to delete this user?</p>
         </Modal.Body>
+
         <Modal.Footer>
-          <Button variant="danger" onClick={handleDelete}>
-            Delete
-          </Button>
-          <Button variant="secondary" onClick={() => setShowDeleteDialog(false)}>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
             Cancel
+          </Button>
+
+          <Button variant="danger" onClick={deleteUser}>
+            Delete
           </Button>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Container>
   );
-}
+};
 
 export default User;

@@ -1,0 +1,28 @@
+.container {
+  max-width: 1280px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+table th, table td {
+  border: 1px solid #555;
+  padding: 0.5rem 1rem;
+}
+
+input {
+  margin-right: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #1a1a1a;
+  color: rgba(255,255,255,0.87);
+}
+input:focus {
+  outline: 2px solid #646cff;
+}
