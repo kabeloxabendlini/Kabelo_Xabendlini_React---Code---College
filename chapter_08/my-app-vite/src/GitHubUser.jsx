@@ -72,7 +72,7 @@ class GitHubUser extends Component {
               <h5>{repo.name}</h5>
               <p>{repo.description || 'No description provided.'}</p>
               <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
-                View on GitHub
+                <button>View on GitHub</button>
               </a>
             </div>
           ))}
