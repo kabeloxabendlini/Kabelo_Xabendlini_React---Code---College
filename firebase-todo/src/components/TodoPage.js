@@ -1,71 +1,88 @@
 // FILE: src/components/TodoPage.js
-// src/components/TodoPage.js
 import React, { useEffect, useState } from "react";
 import { db, auth } from "../firebase";
 import {
   collection,
-  addDoc,
   query,
-  onSnapshot,
   where,
+  orderBy,
+  addDoc,
+  serverTimestamp,
   deleteDoc,
   doc,
+  onSnapshot,
 } from "firebase/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function TodoPage() {
+  const [user] = useAuthState(auth);
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
 
   useEffect(() => {
+    if (!user) return;
+
     const q = query(
       collection(db, "todos"),
-      where("uid", "==", auth.currentUser?.uid)
+      where("uid", "==", user.uid),
+      orderBy("createdAt")
     );
 
+    // Real-time listener
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
+      const todosList = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setTodos(data);
+      setTodos(todosList);
     });
 
-    return unsubscribe;
-  }, []);
+    return () => unsubscribe(); // cleanup listener on unmount
+  }, [user]);
 
-  const addTodo = async () => {
-    if (!newTodo) return;
-    await addDoc(collection(db, "todos"), {
-      text: newTodo,
-      uid: auth.currentUser.uid,
-      createdAt: new Date(),
-    });
-    setNewTodo("");
+  const handleAddTodo = async () => {
+    if (!newTodo.trim()) return;
+    try {
+      await addDoc(collection(db, "todos"), {
+        uid: user.uid,
+        text: newTodo,
+        createdAt: serverTimestamp(),
+      });
+      setNewTodo("");
+    } catch (err) {
+      console.error("Error adding todo:", err.message);
+    }
   };
 
-  const deleteTodo = async (id) => {
-    await deleteDoc(doc(db, "todos", id));
+  const handleDeleteTodo = async (id) => {
+    try {
+      await deleteDoc(doc(db, "todos", id));
+    } catch (err) {
+      console.error("Error deleting todo:", err.message);
+    }
   };
+
+  if (!user) return <p>Please log in to view your todos.</p>;
 
   return (
     <div>
-      <h2>Your Todos</h2>
+      <h1>{user.displayName || user.email}'s Todos</h1>
       <input
         type="text"
+        placeholder="New todo"
         value={newTodo}
         onChange={(e) => setNewTodo(e.target.value)}
-        placeholder="New Todo"
       />
-      <button onClick={addTodo}>Add</button>
-
+      <button onClick={handleAddTodo}>Add Todo</button>
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
             {todo.text}{" "}
-            <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
           </li>
         ))}
       </ul>
     </div>
   );
 }
+        autoComplete="email"  // add autocomplete

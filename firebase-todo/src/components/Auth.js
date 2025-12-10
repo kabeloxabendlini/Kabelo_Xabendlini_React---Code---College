@@ -1,26 +1,47 @@
 // FILE: src/components/Auth.js
-// src/components/Auth.js
-import React from "react";
+import React, { useState } from "react";
 import { auth, googleProvider } from "../firebase";
-import { signInWithPopup } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
 export default function Auth() {
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const signInWithGoogle = async () => {
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/"); // redirect after login
     } catch (err) {
       console.error(err);
     }
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <button onClick={signInWithGoogle}>Sign in with Google</button>
+    <div className="auth-container">
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        autoComplete="email"   // ✅ add autocomplete
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        autoComplete="current-password"   // ✅ add autocomplete
+      />
+      <button onClick={handleLogin}>Login</button>
+      <button onClick={handleGoogleLogin}>Sign in with Google</button>
     </div>
   );
 }
+        autoComplete="email"  // add autocomplete
