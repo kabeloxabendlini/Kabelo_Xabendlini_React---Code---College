@@ -1,27 +1,47 @@
-import React from 'react'
-import { Container, Row, Col } from 'react-bootstrap';
-import Rating from './Rating'
+import React, { Component } from 'react';
+import Rating from './Rating';
+import { Row, Col, Image } from 'react-bootstrap';
 
-const Product = (props) => {
-  return (
-    <Container style={{ width: 500, marginTop: 5 }}>
-      <Row>
-        <Col xs="auto">
-          <img 
-            width={64} height={64} src={props.data.imageUrl}
-            alt={props.data.productName} />
+class Product extends Component {
+  render() {
+    // Destructure relevant product data from props
+    const { imageUrl, productName, releasedDate, rating, numOfReviews, description } = this.props.data;
+
+    return (
+      // Row wrapper for product layout (image + product details)
+      <Row className="mb-4 align-items-center">
+        
+        {/* Product Image Section */}
+        <Col xs="auto" className="d-flex align-items-center">
+          <Image
+            src={imageUrl}        // Product image URL
+            alt={productName}     // Accessible alt text
+            width={120}           // Larger width for visibility
+            height={120}          // Larger height to match width
+            rounded               // Rounded edges
+          />
         </Col>
+
+        {/* Product Details Section */}
         <Col>
-          <div>{props.data.productName}</div>
-          <div>{props.data.releasedDate}</div>
-          <Rating
-            rating={props.data.rating}
-            numOfReviews={props.data.numOfReviews} />
-          <p>{props.data.description}</p>
+          {/* Product Name */}
+          <h5>{productName}</h5>
+
+          {/* Release Date */}
+          <small className="text-muted">{releasedDate}</small>
+
+          {/* Rating Component */}
+          <div className="mt-2">
+            {/* Pass rating and number of reviews to Rating component */}
+            <Rating rating={rating} numOfReviews={numOfReviews} />
+          </div>
+
+          {/* Product Description */}
+          <p className="mt-2">{description}</p>
         </Col>
       </Row>
-    </Container>
-  )
+    );
+  }
 }
 
 export default Product;
