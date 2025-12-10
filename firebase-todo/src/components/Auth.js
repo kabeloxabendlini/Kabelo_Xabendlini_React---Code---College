@@ -30,18 +30,19 @@ export default function Auth() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        autoComplete="email"   // ✅ add autocomplete
+        autoComplete="email"
       />
       <input
         type="password"
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        autoComplete="current-password"   // ✅ add autocomplete
+        autoComplete="current-password"
       />
       <button onClick={handleLogin}>Login</button>
       <button onClick={handleGoogleLogin}>Sign in with Google</button>
     </div>
   );
 }
+
         autoComplete="email"  // add autocomplete

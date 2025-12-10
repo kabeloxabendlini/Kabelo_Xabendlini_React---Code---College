@@ -5,13 +5,13 @@ import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth"
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
-  measurementId: "YOUR_MEASUREMENT_ID"
+  apiKey: "AIzaSyAYMlbNYYPrRhyjc-yzkvncL1k_gZo1_C8",
+  authDomain: "fir-todo-b76f4.firebaseapp.com",
+  projectId: "fir-todo-b76f4",
+  storageBucket: "fir-todo-b76f4.firebasestorage.app",
+  messagingSenderId: "631032473138",
+  appId: "1:631032473138:web:36c30d588304a4e7ddbe2b",
+  measurementId: "G-FMC8D9B0DE"
 };
 
 const app = initializeApp(firebaseConfig);

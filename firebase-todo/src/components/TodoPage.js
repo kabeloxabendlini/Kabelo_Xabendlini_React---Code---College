@@ -28,38 +28,25 @@ export default function TodoPage() {
       orderBy("createdAt")
     );
 
-    // Real-time listener
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const todosList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTodos(todosList);
+      setTodos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
-    return () => unsubscribe(); // cleanup listener on unmount
+    return () => unsubscribe();
   }, [user]);
 
   const handleAddTodo = async () => {
     if (!newTodo.trim()) return;
-    try {
-      await addDoc(collection(db, "todos"), {
-        uid: user.uid,
-        text: newTodo,
-        createdAt: serverTimestamp(),
-      });
-      setNewTodo("");
-    } catch (err) {
-      console.error("Error adding todo:", err.message);
-    }
+    await addDoc(collection(db, "todos"), {
+      uid: user.uid,
+      text: newTodo,
+      createdAt: serverTimestamp(),
+    });
+    setNewTodo("");
   };
 
   const handleDeleteTodo = async (id) => {
-    try {
-      await deleteDoc(doc(db, "todos", id));
-    } catch (err) {
-      console.error("Error deleting todo:", err.message);
-    }
+    await deleteDoc(doc(db, "todos", id));
   };
 
   if (!user) return <p>Please log in to view your todos.</p>;

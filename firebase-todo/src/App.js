@@ -10,8 +10,9 @@ import { signOut } from "firebase/auth";
 export default function App() {
   const [user, setUser] = React.useState(null);
 
+  // Listen for auth state changes
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(u => setUser(u));
+    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
     return unsubscribe;
   }, []);
 
@@ -21,7 +22,14 @@ export default function App() {
         <Link to="/">Home</Link>
         {user ? (
           <div className="user-section">
-            {user.photoURL && <img src={user.photoURL} width="34" style={{ borderRadius: "50%" }} />}
+            {user.photoURL && (
+              <img
+                src={user.photoURL}
+                width="34"
+                alt="Profile"
+                style={{ borderRadius: "50%" }}
+              />
+            )}
             <span>{user.displayName || user.email}</span>
             <button onClick={() => signOut(auth)}>Logout</button>
           </div>
@@ -44,3 +52,5 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+        // onChange = {(e) => setEmail (e.target.value)}
