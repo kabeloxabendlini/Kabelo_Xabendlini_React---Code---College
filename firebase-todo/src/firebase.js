@@ -1,10 +1,9 @@
 // FILE: src/firebase.js
+// src/firebase.js
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
-// Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAYMlbNYYPrRhyjc-yzkvncL1k_gZo1_C8",
   authDomain: "fir-todo-b76f4.firebaseapp.com",
@@ -15,17 +14,20 @@ const firebaseConfig = {
   measurementId: "G-FMC8D9B0DE"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
-// Initialize services
-const db = getFirestore(app);
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
+// Auth setup
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 
-// Export services for use in components
-export { db, auth, googleProvider };
+// Firestore setup
+export const db = getFirestore(app);
+
+// Connect to emulators if in development
+if (window.location.hostname === "localhost") {
+  connectAuthEmulator(auth, "http://localhost:9099");
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
 
 export default app;
 
