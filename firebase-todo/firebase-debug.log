@@ -1,0 +1,73 @@
+[debug] [2025-12-10T18:13:35.200Z] ----------------------------------------------------------------------
+[debug] [2025-12-10T18:13:35.207Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Admin\Documents\Code College Repositories\React - Code College\Classwork\firebase-todo\%USERPROFILE%\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start
+[debug] [2025-12-10T18:13:35.208Z] CLI Version:   14.27.0
+[debug] [2025-12-10T18:13:35.208Z] Platform:      win32
+[debug] [2025-12-10T18:13:35.209Z] Node Version:  v22.16.0
+[debug] [2025-12-10T18:13:35.209Z] Time:          Wed Dec 10 2025 20:13:35 GMT+0200 (South Africa Standard Time)
+[debug] [2025-12-10T18:13:35.210Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-12-10T18:13:36.115Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-12-10T18:13:36.116Z] > authorizing via signed-in user (kabeloxabendlini385@gmail.com)
+[debug] [2025-12-10T18:13:36.413Z] java version "17.0.12" 2024-07-16 LTS
+
+[debug] [2025-12-10T18:13:36.414Z] Java(TM) SE Runtime Environment (build 17.0.12+8-LTS-286)
+Java HotSpot(TM) 64-Bit Server VM (build 17.0.12+8-LTS-286, mixed mode, sharing)
+
+[debug] [2025-12-10T18:13:36.446Z] Parsed Java major version: 17
+[warn] !!  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
+[info] i  emulators: Starting emulators: auth, firestore, hosting {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth, firestore, hosting"}}
+[debug] [2025-12-10T18:13:36.513Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-12-10T18:13:36.513Z] [auth] Authentication Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-12-10T18:13:36.513Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-12-10T18:13:36.513Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-12-10T18:13:36.514Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2025-12-10T18:13:36.515Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9099}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8080}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-12-10T18:13:36.526Z] Emulator locator file path: C:\Users\Admin\AppData\Local\Temp\hub-fir-todo-b76f4.json
+[debug] [2025-12-10T18:13:36.527Z] [hub] writing locator at C:\Users\Admin\AppData\Local\Temp\hub-fir-todo-b76f4.json
+[warn] !  firestore: Cloud Firestore Emulator does not support multiple databases yet. {"metadata":{"emulator":{"name":"firestore"},"message":"Cloud Firestore Emulator does not support multiple databases yet."}}
+[warn] !  firestore: Did not find a Cloud Firestore rules file specified in a firebase.json config file. {"metadata":{"emulator":{"name":"firestore"},"message":"Did not find a Cloud Firestore rules file specified in a firebase.json config file."}}
+[warn] !  firestore: The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"firestore"},"message":"The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
+[debug] [2025-12-10T18:13:36.568Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-12-10T18:13:36.568Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2025-12-10T18:13:36.568Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","C:\\Users\\Admin\\.cache\\firebase\\emulators\\cloud-firestore-emulator-v1.19.8.jar","--host","127.0.0.1","--port",8080,"--websocket_port",9150,"--project_id","fir-todo-b76f4","--single_project_mode",true],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8080} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\Admin\\\\.cache\\\\firebase\\\\emulators\\\\cloud-firestore-emulator-v1.19.8.jar\",\"--host\",\"127.0.0.1\",\"--port\",8080,\"--websocket_port\",9150,\"--project_id\",\"fir-todo-b76f4\",\"--single_project_mode\",true],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8080}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[info] +  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
+[debug] [2025-12-10T18:14:17.527Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:17.528Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:17.538Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/fir-todo-b76f4/sites 
+[debug] [2025-12-10T18:14:19.552Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/fir-todo-b76f4/sites 200
+[debug] [2025-12-10T18:14:19.553Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/fir-todo-b76f4/sites {"sites":[{"name":"projects/fir-todo-b76f4/sites/fir-todo-b76f4","defaultUrl":"https://fir-todo-b76f4.web.app","appId":"1:631032473138:web:36c30d588304a4e7ddbe2b","type":"DEFAULT_SITE"}]}
+[debug] [2025-12-10T18:14:19.553Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:19.553Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:19.554Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4/webApps/1:631032473138:web:36c30d588304a4e7ddbe2b/config [none]
+[debug] [2025-12-10T18:14:20.562Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4/webApps/1:631032473138:web:36c30d588304a4e7ddbe2b/config 200
+[debug] [2025-12-10T18:14:20.563Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4/webApps/1:631032473138:web:36c30d588304a4e7ddbe2b/config {"projectId":"fir-todo-b76f4","appId":"1:631032473138:web:36c30d588304a4e7ddbe2b","storageBucket":"fir-todo-b76f4.firebasestorage.app","apiKey":"AIzaSyAYMlbNYYPrRhyjc-yzkvncL1k_gZo1_C8","authDomain":"fir-todo-b76f4.firebaseapp.com","messagingSenderId":"631032473138","measurementId":"G-FMC8D9B0DE","projectNumber":"631032473138","version":"2"}
+[debug] [2025-12-10T18:14:20.576Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:20.576Z] Checked if tokens are valid: true, expires at: 1765393011560
+[debug] [2025-12-10T18:14:20.577Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4 [none]
+[debug] [2025-12-10T18:14:20.983Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4 200
+[debug] [2025-12-10T18:14:20.984Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fir-todo-b76f4 {"projectId":"fir-todo-b76f4","projectNumber":"631032473138","displayName":"firebase-todo","name":"projects/fir-todo-b76f4","resources":{"hostingSite":"fir-todo-b76f4"},"state":"ACTIVE","etag":"1_9e7cf400-681d-4163-a306-bcbb916fe4b4"}
+[info] i  hosting[fir-todo-b76f4]: Serving hosting files from: build {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mbuild\u001b[22m"}}
+[info] +  hosting[fir-todo-b76f4]: Local server: http://127.0.0.1:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://127.0.0.1:5000\u001b[22m\u001b[24m"}}
+[debug] [2025-12-10T18:14:21.089Z] Could not find VSCode notification endpoint: FetchError: request to http://localhost:40001/vscode/notify failed, reason: . If you are not running the Firebase Data Connect VSCode extension, this is expected and not an issue.
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────────┬────────────────┬─────────────────────────────────┐
+│ Emulator       │ Host:Port      │ View in Emulator UI             │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Authentication │ 127.0.0.1:9099 │ http://127.0.0.1:4000/auth      │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Firestore      │ 127.0.0.1:8080 │ http://127.0.0.1:4000/firestore │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Hosting        │ 127.0.0.1:5000 │ n/a                             │
+└────────────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub host: 127.0.0.1 port: 4400
+  Other reserved ports: 4500, 9150
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
+[warn] !  emulators: firebase-tools will drop support for Java version < 21 soon in firebase-tools@15. Please install a JDK at version 21 or above to get a compatible runtime. 
