@@ -16,7 +16,7 @@ const firebaseConfig = {
   measurementId: "G-38S60FNJV4"
 };
 
-https://my-app-vite-5861d.web.app
+// https://my-app-vite-5861d.web.app
 
 // Initialize App (prevent double initialization)
 const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
