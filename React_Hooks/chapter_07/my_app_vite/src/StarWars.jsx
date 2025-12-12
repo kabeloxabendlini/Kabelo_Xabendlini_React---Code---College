@@ -1,39 +1,42 @@
-import React, { use, Suspense, useEffect, useState } from 'react'
-import axios from 'axios' // npm install axios
-
-function fetchData(searchTerm) {
-    return new Promise((resolve, reject) => {
-        axios.get(`https://swapi.dev/api/people/?search=${searchTerm}`)
-            .then((res) => {
-                console.log(res.data.results)
-                resolve(res.data.results)
-            })
-    })
-}
-
-const Characters = ({ fetchDataPromise }) => {
-    const [data, setData] = useState([])
-
-    useEffect(() => {
-        fetchDataPromise.then((data) => {
-            setData(data)
-        })
-    }, [])
-
-    return (
-        <div>
-        {data.map((item) => {
-            return <div key={item.name}>{item.name}</div>
-        })}
-        </div>
-    )
-}
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function StarWars() {
-    const [searchTerm, setSearchTerm] = useState("luke")
+    const [searchTerm, setSearchTerm] = useState("luke");
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+
+        axios
+            .get(`https://swapi.dev/api/people/?search=${searchTerm}`)
+            .then((res) => {
+                setData(res.data.results);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    }, [searchTerm]);
+
     return (
-        <Characters fetchDataPromise={fetchData(searchTerm)} />
-    )
+        <div style={{ padding: "20px" }}>
+            <h2>Star Wars Character Search</h2>
+
+            <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search character..."
+            />
+
+            {loading && <p>Loading...</p>}
+
+            {data.map((item) => (
+                <div key={item.name}>
+                    <strong>{item.name}</strong>
+                </div>
+            ))}
+        </div>
+    );
 }
 
-export default StarWars
+export default StarWars;
