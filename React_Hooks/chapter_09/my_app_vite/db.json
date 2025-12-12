@@ -1,7 +1,27 @@
 {
   "todos": [
-    { "id": 1, "text": "Learn React", "completed": false },
-    { "id": 2, "text": "Learn Vite", "completed": false },
-    { "id": 3, "text": "Build a ToDo App", "completed": false }
+    {
+      "id": "1",
+      "text": "Learn React",
+      "completed": false
+    },
+    {
+      "id": "2",
+      "text": "Learn Vite",
+      "completed": false
+    },
+    {
+      "id": "3",
+      "text": "Build a ToDo App",
+      "completed": false
+    },
+    {
+      "id": "ee5f4921-b00c-4ad0-bbf1-a6cf0bc1329d",
+      "text": "Study"
+    },
+    {
+      "id": "a8ed2790-9a34-48d7-a35c-456d2a673c44",
+      "text": "Pray"
+    }
   ]
 }
