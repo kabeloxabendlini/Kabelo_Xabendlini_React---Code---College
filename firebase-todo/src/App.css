@@ -236,3 +236,165 @@ input:focus {
   font-weight: 600;
 }
 
+/* ------------------------- Global Variables ------------------------- */
+/*
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.08);
+  --text-color: #1e293b;
+  --text-muted: #475569;
+  --bg: #f8fafc;
+  --hover-bg: #f3f4f6;
+}
+*/
+
+/* ------------------------- Body & App ------------------------- */
+/*
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-color);
+}
+
+.App {
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+}
+*/
+
+/* ------------------------- Header & Logo ------------------------- */
+/*
+.App-header {
+  width: 100%;
+  max-width: 800px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(10px);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 40px 30px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.App-header h1 {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.App-header p {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.App-logo {
+  height: 150px;
+  margin-bottom: 20px;
+  animation: float 4s ease-in-out infinite, spin-slow 40s linear infinite;
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.15));
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+*/
+
+/* ------------------------- Links ------------------------- */
+/*
+.App-link {
+  color: var(--primary);
+  font-weight: bold;
+  text-decoration: none;
+  transition: all ease-in-out;
+}
+
+.App-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+*/
+
+/* ------------------------- Todo / Project Lists ------------------------- */
+/*
+ul {
+  list-style: none;
+  width: auto;
+  margin: auto;
+  border-radius: var(--radius);
+  border: thin solid var(--border);
+  box-shadow: var(--shadow);
+  background-color: var(--card-bg);
+  transition-duration: .2s;
+}
+
+li:hover {
+  box-shadow: .2s;
+}
+
+li.done span {
+  text-decoration: none;
+  color: #dc2626;
+}
+
+button {
+  margin-left: auto;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: .7rem;
+  font-size: .9rem;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #dc2626;
+}
+*/
+
+/* ------------------------- Forms ------------------------- */
+/*
+input {
+  padding: .7rem;
+  border-radius: .7rem;
+  border: .1rem solid #e5e7eb;
+  font-size: .9rem;
+}
+
+.add-todo button,
+.add-project button {
+  background-color: #6366f1;
+  color: white;
+  border-radius: .7rem;
+  font-weight: bold;
+}
+
+.add-todo button:hover,
+.add-project button:hover {
+  background-color: #4f46e5;
+}
+*/
+
+/* ------------------------- Error Messages ------------------------- */
+/*
+.error {
+  color: #dc2626;
+  font-weight: bold;
+  margin-top: .7rem;
+}
+*/
