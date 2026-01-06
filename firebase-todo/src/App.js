@@ -1,6 +1,5 @@
-// FILE: src/App.js
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 import Auth from "./components/Auth";
 import TodoPage from "./components/TodoPage";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -10,16 +9,16 @@ import { signOut } from "firebase/auth";
 export default function App() {
   const [user, setUser] = React.useState(null);
 
-  // Listen for auth state changes
   React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
+    const unsubscribe = auth.onAuthStateChanged(u => setUser(u));
     return unsubscribe;
   }, []);
 
   return (
-    <BrowserRouter>
+    <div className="App">
       <nav className="navbar">
         <Link to="/">Home</Link>
+
         {user ? (
           <div className="user-section">
             {user.photoURL && (
@@ -49,8 +48,6 @@ export default function App() {
           }
         />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
-
-        // onChange = {(e) => setEmail (e.target.value)}

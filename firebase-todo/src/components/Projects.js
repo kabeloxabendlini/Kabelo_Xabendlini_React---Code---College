@@ -1,35 +1,62 @@
-// FILE: src/components/Projects.js
 import React from 'react';
 import { db, auth } from '../firebase';
-import { collection, addDoc, query, where, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  onSnapshot,
+  serverTimestamp
+} from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export default function Projects() {
   const [projects, setProjects] = React.useState([]);
   const [name, setName] = React.useState('');
 
+  // ✅ Wait for auth before attaching Firestore listener
   React.useEffect(() => {
-    if (!auth.currentUser) return;
+    let unsubscribeSnapshot = null;
 
-    const q = query(
-      collection(db, 'projects'),
-      where('uid', '==', auth.currentUser.uid)
-    );
+    const unsubscribeAuth = onAuthStateChanged(auth, user => {
+      if (!user) {
+        setProjects([]);
+        if (unsubscribeSnapshot) unsubscribeSnapshot();
+        return;
+      }
 
-    const unsub = onSnapshot(q, snapshot =>
-      setProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })))
-    );
+      const q = query(
+        collection(db, 'projects'),
+        where('uid', '==', user.uid)
+      );
 
-    return () => unsub();
+      unsubscribeSnapshot = onSnapshot(q, snapshot => {
+        setProjects(
+          snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }))
+        );
+      });
+    });
+
+    return () => {
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      unsubscribeAuth();
+    };
   }, []);
 
+  // ✅ Safe add project
   async function addProject(e) {
     e.preventDefault();
+
+    if (!auth.currentUser) return;
     if (!name.trim()) return;
 
     await addDoc(collection(db, 'projects'), {
       name: name.trim(),
       uid: auth.currentUser.uid,
-      createdAt: new Date(),
+      createdAt: serverTimestamp()
     });
 
     setName('');
@@ -56,3 +83,4 @@ export default function Projects() {
     </div>
   );
 }
+// FILE: src/components/Projects.js
