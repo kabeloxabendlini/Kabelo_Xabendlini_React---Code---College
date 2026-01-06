@@ -17,4 +17,6 @@ root.render(
     </BrowserRouter>
   </React.StrictMode>
 );
-// --- IGNORE ---
+// --- IGNORE --- 
+// --- for testing purposes ---
+export { root };
