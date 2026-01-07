@@ -9,10 +9,8 @@ export default function Auth() {
   const [error, setError] = useState("");
   const [suggestions, setSuggestions] = useState([]);
 
-  // Common email domains for autocomplete
   const commonEmails = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
 
-  // Email/password login
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
@@ -21,27 +19,21 @@ export default function Auth() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      // Map Firebase errors to friendly messages
       switch (err.code) {
         case "auth/invalid-email":
-          setError("Invalid email address");
-          break;
+          setError("Invalid email address"); break;
         case "auth/user-not-found":
-          setError("User not found");
-          break;
+          setError("User not found"); break;
         case "auth/wrong-password":
-          setError("Incorrect password");
-          break;
+          setError("Incorrect password"); break;
         case "auth/operation-not-allowed":
-          setError("Email/password login is not enabled in Firebase");
-          break;
+          setError("Email/password login is not enabled in Firebase"); break;
         default:
           setError(err.message);
       }
     }
   };
 
-  // Google login
   const handleGoogleLogin = async () => {
     setError("");
     try {
@@ -57,7 +49,6 @@ export default function Auth() {
     }
   };
 
-  // Show email domain suggestions
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmail(value);
@@ -68,20 +59,17 @@ export default function Auth() {
         .filter((d) => d.startsWith(domainPart))
         .map((d) => `${user}@${d}`);
       setSuggestions(filtered);
-    } else {
-      setSuggestions([]);
-    }
+    } else setSuggestions([]);
   };
 
-  const selectSuggestion = (suggestion) => {
-    setEmail(suggestion);
+  const selectSuggestion = (s) => {
+    setEmail(s);
     setSuggestions([]);
   };
 
   return (
     <div style={styles.container}>
       <h2>Login</h2>
-
       <form onSubmit={handleLogin} style={styles.form}>
         <input
           type="email"
@@ -95,13 +83,10 @@ export default function Auth() {
         {suggestions.length > 0 && (
           <ul style={styles.suggestions}>
             {suggestions.map((s, i) => (
-              <li key={i} onClick={() => selectSuggestion(s)} style={styles.suggestionItem}>
-                {s}
-              </li>
+              <li key={i} onClick={() => selectSuggestion(s)} style={styles.suggestionItem}>{s}</li>
             ))}
           </ul>
         )}
-
         <input
           type="password"
           placeholder="Password"
@@ -111,21 +96,15 @@ export default function Auth() {
           required
           style={styles.input}
         />
-
-        <button type="submit" style={styles.button}>
-          Login
-        </button>
+        <button type="submit" style={styles.button}>Login</button>
       </form>
-
-      <button onClick={handleGoogleLogin} style={styles.googleButton}>
-        Sign in with Google
-      </button>
-
+      <button onClick={handleGoogleLogin} style={styles.googleButton}>Sign in with Google</button>
       {error && <p style={styles.error}>{error}</p>}
     </div>
   );
 }
 
+// Styles omitted for brevity (same as your previous Auth.js)
 // ----------------------
 // Styles
 // ----------------------

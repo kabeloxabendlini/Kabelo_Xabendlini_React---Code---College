@@ -47,5 +47,4 @@ if (window.location.hostname === "localhost") {
 
 export default app;
 
-
 // https://fir-todo-b76f4.web.app
