@@ -1,94 +1,103 @@
-// src/App.js
 // FILE: src/App.js
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { auth } from "./firebase";
+import { signOut } from "firebase/auth"; // Correct import from firebase/auth
+
 import Auth from "./components/Auth";
 import TodoPage from "./components/TodoPage";
+import Projects from "./components/Projects";
+import Profile from "./components/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { auth } from "./firebase";
-import { signOut } from "firebase/auth"; // ✅ Correct import
+import AddTodo from "./components/AddTodo";
 
-export default function App() {
-  const [user, setUser] = React.useState(null);
+import { useAuthState } from "react-firebase-hooks/auth";
 
-  // Listen for auth state changes
-  React.useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
-    return unsubscribe;
-  }, []);
+function App() {
+  const [user] = useAuthState(auth);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+    } catch (err) {
+      console.error("Sign out error:", err);
+    }
+  };
 
   return (
-    <BrowserRouter>
-      {/* Navbar */}
-      <nav className="navbar" style={styles.navbar}>
+    <Router>
+      <div style={styles.nav}>
         <Link to="/" style={styles.link}>Home</Link>
-        {user ? (
-          <div className="user-section" style={styles.userSection}>
-            {user.photoURL && (
-              <img
-                src={user.photoURL}
-                width="34"
-                alt="Profile"
-                style={{ borderRadius: "50%" }}
-              />
-            )}
-            <span style={styles.userName}>{user.displayName || user.email}</span>
-            <button style={styles.logoutButton} onClick={() => signOut(auth)}>
-              Logout
-            </button>
-          </div>
-        ) : (
-          <Link to="/auth" style={styles.link}>Login</Link>
-        )}
-      </nav>
+        {user && <Link to="/profile" style={styles.link}>Profile</Link>}
+        {user && <Link to="/projects" style={styles.link}>Projects</Link>}
+        {user && <button onClick={handleSignOut} style={styles.logoutButton}>Sign Out</button>}
+      </div>
 
-      {/* Routes */}
       <Routes>
-        <Route path="/auth" element={<Auth />} />
         <Route
           path="/"
           element={
             <ProtectedRoute user={user}>
-              <TodoPage />
+              <div style={{ padding: "20px" }}>
+                <h1>Welcome, {user?.email}</h1>
+                <AddTodo />
+                <TodoPage />
+              </div>
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute user={user}>
+              <Projects />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute user={user}>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/auth" element={<Auth />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
-// Optional inline styling for navbar
+// ----------------------
+// Simple styles
+// ----------------------
 const styles = {
-  navbar: {
+  nav: {
     display: "flex",
-    justifyContent: "space-between",
+    gap: "10px",
+    padding: "10px",
+    backgroundColor: "#1a1a1a",
+    color: "#fff",
     alignItems: "center",
-    padding: "12px 24px",
-    backgroundColor: "#f3f4f6",
-    borderBottom: "1px solid #e5e7eb",
   },
   link: {
+    color: "#fff",
     textDecoration: "none",
-    color: "#6366f1",
-    fontWeight: "600",
-    fontSize: "1rem",
-  },
-  userSection: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  userName: {
-    fontWeight: "500",
+    fontWeight: "bold",
   },
   logoutButton: {
-    padding: "6px 12px",
-    borderRadius: "6px",
+    marginLeft: "auto",
+    backgroundColor: "#de5246",
     border: "none",
-    backgroundColor: "#ef4444",
+    padding: "6px 12px",
+    borderRadius: "5px",
     color: "#fff",
     cursor: "pointer",
-    fontWeight: "600",
+    fontWeight: "bold",
   },
 };
+
+export default App;

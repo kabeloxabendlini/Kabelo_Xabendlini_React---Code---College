@@ -7,45 +7,101 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
-  // ✅ Email/Password login
+  // Common email domains for autocomplete
+  const commonEmails = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
+
+  // Email/password login
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    if (!email || !password) return setError("Please enter email and password");
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setError("");
-      alert("Logged in successfully!");
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      // Map Firebase errors to friendly messages
+      switch (err.code) {
+        case "auth/invalid-email":
+          setError("Invalid email address");
+          break;
+        case "auth/user-not-found":
+          setError("User not found");
+          break;
+        case "auth/wrong-password":
+          setError("Incorrect password");
+          break;
+        case "auth/operation-not-allowed":
+          setError("Email/password login is not enabled in Firebase");
+          break;
+        default:
+          setError(err.message);
+      }
     }
   };
 
-  // ✅ Google login
+  // Google login
   const handleGoogleLogin = async () => {
+    setError("");
     try {
       await signInWithPopup(auth, googleProvider);
-      setError("");
-      alert("Logged in with Google!");
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      if (err.code === "auth/operation-not-allowed") {
+        setError("Google login is not enabled in Firebase");
+      } else if (err.code === "auth/unauthorized-domain") {
+        setError("This domain is not authorized in Firebase Auth");
+      } else {
+        setError(err.message);
+      }
     }
+  };
+
+  // Show email domain suggestions
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (value.includes("@")) {
+      const [user, domainPart] = value.split("@");
+      const filtered = commonEmails
+        .filter((d) => d.startsWith(domainPart))
+        .map((d) => `${user}@${d}`);
+      setSuggestions(filtered);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const selectSuggestion = (suggestion) => {
+    setEmail(suggestion);
+    setSuggestions([]);
   };
 
   return (
     <div style={styles.container}>
       <h2>Login</h2>
+
       <form onSubmit={handleLogin} style={styles.form}>
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           autoComplete="username"
           required
           style={styles.input}
         />
+        {suggestions.length > 0 && (
+          <ul style={styles.suggestions}>
+            {suggestions.map((s, i) => (
+              <li key={i} onClick={() => selectSuggestion(s)} style={styles.suggestionItem}>
+                {s}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <input
           type="password"
           placeholder="Password"
@@ -55,6 +111,7 @@ export default function Auth() {
           required
           style={styles.input}
         />
+
         <button type="submit" style={styles.button}>
           Login
         </button>
@@ -69,6 +126,9 @@ export default function Auth() {
   );
 }
 
+// ----------------------
+// Styles
+// ----------------------
 const styles = {
   container: {
     maxWidth: "400px",
@@ -78,8 +138,13 @@ const styles = {
     color: "#fff",
     borderRadius: "10px",
     textAlign: "center",
+    position: "relative",
   },
-  form: { display: "flex", flexDirection: "column", gap: "10px" },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
   input: {
     padding: "10px",
     borderRadius: "5px",
@@ -105,5 +170,25 @@ const styles = {
     cursor: "pointer",
     fontWeight: "bold",
   },
-  error: { marginTop: "10px", color: "#ff6b6b" },
+  error: {
+    marginTop: "10px",
+    color: "#ff6b6b",
+    fontWeight: "600",
+  },
+  suggestions: {
+    listStyle: "none",
+    margin: 0,
+    padding: "5px",
+    border: "1px solid #ccc",
+    borderRadius: "5px",
+    position: "absolute",
+    width: "100%",
+    background: "white",
+    color: "#000",
+    zIndex: 10,
+  },
+  suggestionItem: {
+    padding: "5px",
+    cursor: "pointer",
+  },
 };
