@@ -1,12 +1,14 @@
+// FILE: src/components/Login.js
 import React, { useState } from "react";
-import { auth, googleProvider } from "./firebase"; // adjust path if your firebase.js is elsewhere
+import { auth, googleProvider } from "../firebase"; // Adjust path if your firebase.js is elsewhere
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 
-const Login = () => {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // Email/password login
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -14,16 +16,19 @@ const Login = () => {
       setError("");
       alert("Logged in successfully!");
     } catch (err) {
+      console.error(err);
       setError(err.message);
     }
   };
 
+  // Google login
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       setError("");
       alert("Logged in with Google!");
     } catch (err) {
+      console.error(err);
       setError(err.message);
     }
   };
@@ -31,6 +36,7 @@ const Login = () => {
   return (
     <div style={styles.container}>
       <h2>Login</h2>
+
       <form onSubmit={handleLogin} style={styles.form}>
         <input
           type="email"
@@ -41,6 +47,7 @@ const Login = () => {
           required
           style={styles.input}
         />
+
         <input
           type="password"
           placeholder="Password"
@@ -50,18 +57,22 @@ const Login = () => {
           required
           style={styles.input}
         />
+
         <button type="submit" style={styles.button}>
           Login
         </button>
       </form>
+
       <button onClick={handleGoogleLogin} style={styles.googleButton}>
         Sign in with Google
       </button>
+
       {error && <p style={styles.error}>{error}</p>}
     </div>
   );
-};
+}
 
+// Inline styles for simplicity
 const styles = {
   container: {
     maxWidth: "400px",
@@ -98,7 +109,10 @@ const styles = {
     cursor: "pointer",
     fontWeight: "bold",
   },
-  error: { marginTop: "10px", color: "#ff6b6b" },
+  error: {
+    marginTop: "10px",
+    color: "#ff6b6b",
+    fontWeight: "600",
+  },
 };
 
-export default Login;

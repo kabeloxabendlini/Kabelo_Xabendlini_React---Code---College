@@ -1,82 +1,46 @@
-import React from 'react';
-import { db, auth } from '../firebase';
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  onSnapshot,
-  serverTimestamp
-} from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+// src/components/Projects.js
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../firebase";
+import { collection, addDoc, query, where, onSnapshot, serverTimestamp } from "firebase/firestore";
 
 export default function Projects() {
-  const [projects, setProjects] = React.useState([]);
-  const [name, setName] = React.useState('');
+  const [projects, setProjects] = useState([]);
+  const [name, setName] = useState("");
 
-  // ✅ Wait for auth before attaching Firestore listener
-  React.useEffect(() => {
-    let unsubscribeSnapshot = null;
+  useEffect(() => {
+    if (!auth.currentUser) return;
 
-    const unsubscribeAuth = onAuthStateChanged(auth, user => {
-      if (!user) {
-        setProjects([]);
-        if (unsubscribeSnapshot) unsubscribeSnapshot();
-        return;
-      }
+    const q = query(collection(db, "projects"), where("uid", "==", auth.currentUser.uid));
 
-      const q = query(
-        collection(db, 'projects'),
-        where('uid', '==', user.uid)
-      );
-
-      unsubscribeSnapshot = onSnapshot(q, snapshot => {
-        setProjects(
-          snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }))
-        );
-      });
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setProjects(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
-    return () => {
-      if (unsubscribeSnapshot) unsubscribeSnapshot();
-      unsubscribeAuth();
-    };
+    return () => unsubscribe();
   }, []);
 
-  // ✅ Safe add project
-  async function addProject(e) {
+  const addProject = async (e) => {
     e.preventDefault();
-
     if (!auth.currentUser) return;
     if (!name.trim()) return;
 
-    await addDoc(collection(db, 'projects'), {
+    await addDoc(collection(db, "projects"), {
       name: name.trim(),
       uid: auth.currentUser.uid,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
     });
-
-    setName('');
-  }
+    setName("");
+  };
 
   return (
     <div>
-      <h2>Your Projects (second collection)</h2>
-
-      <form onSubmit={addProject} className="add-project">
-        <input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Project name"
-        />
+      <h2>Your Projects</h2>
+      <form onSubmit={addProject}>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Project name" />
         <button type="submit">Create</button>
       </form>
-
       <ul>
-        {projects.map(p => (
+        {projects.map((p) => (
           <li key={p.id}>{p.name}</li>
         ))}
       </ul>

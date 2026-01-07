@@ -1,78 +1,40 @@
-import React, { useEffect, useState } from "react";
+// src/components/TodoPage.js
+import React, { useState, useEffect } from "react";
 import { db, auth } from "../firebase";
-import {
-  collection,
-  query,
-  where,
-  orderBy,
-  addDoc,
-  serverTimestamp,
-  deleteDoc,
-  doc,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot, deleteDoc, doc } from "firebase/firestore";
+import AddTodo from "./AddTodo";
 
 export default function TodoPage() {
-  const user = auth.currentUser; // ✅ Already protected
   const [todos, setTodos] = useState([]);
-  const [newTodo, setNewTodo] = useState("");
 
   useEffect(() => {
-    if (!user) return;
+    if (!auth.currentUser) return;
 
     const q = query(
       collection(db, "todos"),
-      where("uid", "==", user.uid),
+      where("uid", "==", auth.currentUser.uid),
       orderBy("createdAt")
     );
 
-    const unsubscribe = onSnapshot(q, snapshot => {
-      setTodos(snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setTodos(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
-    return unsubscribe;
-  }, [user]);
+    return () => unsubscribe();
+  }, []);
 
-  const handleAddTodo = async () => {
-    if (!newTodo.trim()) return;
-
-    await addDoc(collection(db, "todos"), {
-      uid: user.uid,
-      text: newTodo,
-      createdAt: serverTimestamp(),
-    });
-
-    setNewTodo("");
-  };
-
-  const handleDeleteTodo = async id => {
+  const handleDelete = async (id) => {
     await deleteDoc(doc(db, "todos", id));
   };
 
   return (
     <div>
-      <h1>{user.displayName || user.email}'s Todos</h1>
-
-      <div className="add-todo">
-        <input
-          type="text"
-          placeholder="New todo"
-          value={newTodo}
-          onChange={e => setNewTodo(e.target.value)}
-        />
-        <button onClick={handleAddTodo}>Add Todo</button>
-      </div>
-
+      <h2>{auth.currentUser?.email}'s Todos</h2>
+      <AddTodo />
       <ul>
-        {todos.map(todo => (
+        {todos.map((todo) => (
           <li key={todo.id}>
-            {todo.text}
-            <button onClick={() => handleDeleteTodo(todo.id)}>
-              Delete
-            </button>
+            {todo.text} <button onClick={() => handleDelete(todo.id)}>Delete</button>
           </li>
         ))}
       </ul>
