@@ -1,34 +1,42 @@
 // FILE: src/components/Login.js
 import React, { useState } from "react";
-import { auth, googleProvider } from "../firebase"; // Adjust path if your firebase.js is elsewhere
+import { auth, googleProvider } from "../firebase"; // adjust path if needed
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
+  // ----------------------------
   // Email/password login
+  // ----------------------------
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       setError("");
-      alert("Logged in successfully!");
+      // Redirect to main page after login
+      navigate("/");
     } catch (err) {
-      console.error(err);
+      console.error("Email login error:", err);
       setError(err.message);
     }
   };
 
+  // ----------------------------
   // Google login
+  // ----------------------------
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
       setError("");
-      alert("Logged in with Google!");
+      // Redirect after Google login
+      navigate("/");
     } catch (err) {
-      console.error(err);
+      console.error("Google login error:", err);
       setError(err.message);
     }
   };
@@ -72,7 +80,9 @@ export default function Login() {
   );
 }
 
-// Inline styles for simplicity
+// ----------------------------
+// Inline styles
+// ----------------------------
 const styles = {
   container: {
     maxWidth: "400px",
@@ -115,4 +125,3 @@ const styles = {
     fontWeight: "600",
   },
 };
-
