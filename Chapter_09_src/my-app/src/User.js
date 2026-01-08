@@ -1,86 +1,138 @@
 // src/User.js
 import React, { useEffect, useState } from "react";
-import { ref, onValue, remove } from "firebase/database";
+import { ref, get, push, set, update } from "firebase/database";
 import { db } from "./firebaseConfig";
-import { useNavigate } from "react-router-dom";
-import { Container, Table, Button, Modal } from "react-bootstrap";
+import { Container, Table, Button, Modal, Form, Spinner } from "react-bootstrap";
+import Header from "./Header";
 
 const User = () => {
-  const navigate = useNavigate();
-  const [users, setUsers] = useState({});
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [profiles, setProfiles] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  // Fetch users
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [editUserId, setEditUserId] = useState(null);
+  const [formValues, setFormValues] = useState({ username: "", email: "" });
+
+  // Fetch all profiles from Firebase
   useEffect(() => {
-    const usersRef = ref(db, "/");
-    onValue(usersRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      setUsers(data);
-    });
+    const fetchProfiles = async () => {
+      setLoading(true);
+      try {
+        const snapshot = await get(ref(db, "users"));
+        setProfiles(snapshot.val() || {});
+      } catch (err) {
+        console.error("Error fetching profiles:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfiles();
   }, []);
 
-  // Delete user
-  const confirmDelete = (id) => {
-    setUserToDelete(id);
-    setShowDeleteModal(true);
+  // Open modal for Add/Edit
+  const openModal = (userId = null) => {
+    setEditUserId(userId);
+    if (userId && profiles[userId]?.profile) {
+      setFormValues(profiles[userId].profile);
+    } else {
+      setFormValues({ username: "", email: "" });
+    }
+    setShowModal(true);
   };
 
-  const deleteUser = async () => {
-    await remove(ref(db, "/" + userToDelete));
-    setShowDeleteModal(false);
+  // Handle Add/Edit form submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editUserId) {
+        // Update existing profile
+        await update(ref(db, `users/${editUserId}/profile`), formValues);
+        setProfiles((prev) => ({
+          ...prev,
+          [editUserId]: { profile: formValues },
+        }));
+      } else {
+        // Add new profile
+        const newUserRef = push(ref(db, "users"));
+        await set(ref(db, `users/${newUserRef.key}/profile`), formValues);
+        setProfiles((prev) => ({
+          ...prev,
+          [newUserRef.key]: { profile: formValues },
+        }));
+      }
+      setShowModal(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    }
+  };
+
+  // Handle Delete
+  const handleDelete = async (uid) => {
+    if (!window.confirm("Are you sure you want to delete this profile?")) return;
+    try {
+      await set(ref(db, `users/${uid}`), null);
+      setProfiles((prev) => {
+        const updated = { ...prev };
+        delete updated[uid];
+        return updated;
+      });
+    } catch (err) {
+      console.error("Error deleting profile:", err);
+    }
   };
 
   return (
-    <Container className="mt-5">
+    <>
+      <Header />
+      <Container className="mt-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2>User Profiles</h2>
+          <Button variant="success" onClick={() => openModal()}>
+            + Add Profile
+          </Button>
+        </div>
 
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="fw-bold">User Management</h1>
-
-        <Button variant="success" className="px-4 py-2 shadow"
-          onClick={() => navigate("/add-user")}
-        >
-          + Add User
-        </Button>
-      </div>
-
-      {/* Users Table */}
-      <div className="p-4 shadow-lg rounded bg-white">
         <Table striped bordered hover responsive>
           <thead className="table-dark">
             <tr>
               <th>#</th>
               <th>Username</th>
               <th>Email</th>
-              <th style={{ width: "180px" }}>Actions</th>
+              <th style={{ width: "220px" }}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {Object.keys(users).length === 0 ? (
+            {loading ? (
               <tr>
                 <td colSpan="4" className="text-center py-4">
-                  No users found
+                  <Spinner animation="border" />
+                </td>
+              </tr>
+            ) : Object.keys(profiles).length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-4">
+                  No profiles found
                 </td>
               </tr>
             ) : (
-              Object.entries(users).map(([id, user], index) => (
-                <tr key={id}>
+              Object.entries(profiles).map(([uid, user], index) => (
+                <tr key={uid}>
                   <td>{index + 1}</td>
-                  <td>{user.username}</td>
-                  <td>{user.email}</td>
-                  <td>
+                  <td>{user.profile?.username || "N/A"}</td>
+                  <td>{user.profile?.email || "N/A"}</td>
+                  <td className="d-flex gap-2">
                     <Button
                       variant="primary"
-                      className="me-2"
-                      onClick={() => navigate(`/edit-user/${id}`)}
+                      size="sm"
+                      onClick={() => openModal(uid)}
                     >
                       Edit
                     </Button>
-
                     <Button
                       variant="danger"
-                      onClick={() => confirmDelete(id)}
+                      size="sm"
+                      onClick={() => handleDelete(uid)}
                     >
                       Delete
                     </Button>
@@ -90,29 +142,53 @@ const User = () => {
             )}
           </tbody>
         </Table>
-      </div>
+      </Container>
 
-      {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+      {/* Add/Edit Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
-          <Modal.Title>Confirm Delete</Modal.Title>
+          <Modal.Title>{editUserId ? "Edit Profile" : "Add New Profile"}</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
-          <p className="fs-5">Are you sure you want to delete this user?</p>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                value={formValues.username}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, username: e.target.value })
+                }
+                required
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                value={formValues.email}
+                onChange={(e) =>
+                  setFormValues({ ...formValues, email: e.target.value })
+                }
+                required
+              />
+            </Form.Group>
+            <div className="d-flex justify-content-end">
+              <Button
+                variant="secondary"
+                className="me-2"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" variant="primary">
+                {editUserId ? "Update" : "Add"}
+              </Button>
+            </div>
+          </Form>
         </Modal.Body>
-
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
-            Cancel
-          </Button>
-
-          <Button variant="danger" onClick={deleteUser}>
-            Delete
-          </Button>
-        </Modal.Footer>
       </Modal>
-    </Container>
+    </>
   );
 };
 

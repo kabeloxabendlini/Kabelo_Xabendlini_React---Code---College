@@ -1,14 +1,15 @@
 // src/UserForm.js
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { ref, get, update, push } from "firebase/database";
-import { db } from "./firebaseConfig"; // Make sure db is exported here
-import { useNavigate, useParams } from "react-router-dom";
+import { ref, get, update, push, set } from "firebase/database";
+import { db } from "./firebaseConfig";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Container, Card, Button, Form as BootstrapForm, Alert } from "react-bootstrap";
 
 const UserForm = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // For edit mode
+  const location = useLocation();
+  const { id } = useParams(); // undefined for Add mode
 
   const [initialValues, setInitialValues] = useState({
     username: "",
@@ -17,17 +18,13 @@ const UserForm = () => {
 
   const [submitSuccess, setSubmitSuccess] = useState("");
 
+  // For Edit mode: fetch existing user
   useEffect(() => {
     if (id) {
       const fetchUser = async () => {
         try {
-          const snapshot = await get(ref(db, "/" + id));
-          if (snapshot.exists()) {
-            setInitialValues({
-              username: snapshot.val().username,
-              email: snapshot.val().email,
-            });
-          }
+          const snapshot = await get(ref(db, `users/${id}/profile`));
+          if (snapshot.exists()) setInitialValues(snapshot.val());
         } catch (err) {
           console.error("Error fetching user:", err);
         }
@@ -39,18 +36,22 @@ const UserForm = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       if (id) {
-        await update(ref(db, "/" + id), values);
+        await update(ref(db, `users/${id}/profile`), values);
         setSubmitSuccess("User updated successfully!");
       } else {
-        await push(ref(db, "/"), values);
+        const newUserRef = push(ref(db, "users"));
+        await set(ref(db, `users/${newUserRef.key}/profile`), values);
         setSubmitSuccess("User added successfully!");
+
+        // Call callback to update User.js instantly
+        location.state?.onAddUser?.(newUserRef.key, values);
       }
+
       setSubmitting(false);
-      setTimeout(() => {
-        navigate("/"); // Go back to users list
-      }, 1000);
-    } catch (error) {
-      console.error("Error submitting form:", error);
+
+      setTimeout(() => navigate("/"), 500); // go back to User list quickly
+    } catch (err) {
+      console.error("Error submitting form:", err);
       setSubmitting(false);
     }
   };
@@ -59,7 +60,6 @@ const UserForm = () => {
     <Container className="mt-5">
       <Card className="shadow-lg p-4">
         <h2 className="mb-4 text-center">{id ? "Edit User" : "Add New User"}</h2>
-
         {submitSuccess && <Alert variant="success">{submitSuccess}</Alert>}
 
         <Formik
@@ -80,24 +80,13 @@ const UserForm = () => {
             <Form>
               <BootstrapForm.Group className="mb-3">
                 <BootstrapForm.Label>Username</BootstrapForm.Label>
-                <Field
-                  type="text"
-                  name="username"
-                  className="form-control"
-                  placeholder="Enter username"
-                />
+                <Field type="text" name="username" className="form-control" />
                 <ErrorMessage name="username" component="div" className="text-danger" />
               </BootstrapForm.Group>
 
               <BootstrapForm.Group className="mb-3">
                 <BootstrapForm.Label>Email</BootstrapForm.Label>
-                <Field
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  placeholder="Enter email"
-                  autoComplete="email"
-                />
+                <Field type="email" name="email" className="form-control" />
                 <ErrorMessage name="email" component="div" className="text-danger" />
               </BootstrapForm.Group>
 
