@@ -7,15 +7,23 @@ function StarWars() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        if (!searchTerm) {
+            setData([]);
+            return;
+        }
+
         setLoading(true);
 
         axios
-            .get(`https://swapi.dev/api/people/?search=${searchTerm}`)
+            .get(`https://swapi.py4e.com/api/people/?search=${searchTerm}`)
             .then((res) => {
-                setData(res.data.results);
-                setLoading(false);
+                setData(res.data.results || []);
             })
-            .catch(() => setLoading(false));
+            .catch((err) => {
+                console.error("API error:", err);
+                setData([]);
+            })
+            .finally(() => setLoading(false));
     }, [searchTerm]);
 
     return (
@@ -29,6 +37,10 @@ function StarWars() {
             />
 
             {loading && <p>Loading...</p>}
+
+            {!loading && data.length === 0 && (
+                <p>No characters found.</p>
+            )}
 
             {data.map((item) => (
                 <div key={item.name}>
