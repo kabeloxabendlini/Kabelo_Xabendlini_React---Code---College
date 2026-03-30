@@ -1,7 +1,7 @@
 // FILE: src/components/Auth.js
 import React, { useState, useRef, useEffect } from "react";
 import { auth, googleProvider } from "../firebase";
-import { signInWithEmailAndPassword, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
@@ -18,20 +18,6 @@ export default function Auth() {
 
   const commonEmails = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
 
-  // Handle Google redirect result when returning to the app
-  useEffect(() => {
-    setGoogleLoading(true);
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) navigate("/");
-      })
-      .catch((err) => {
-        if (err.code !== "auth/no-auth-event") setError(err.message);
-      })
-      .finally(() => setGoogleLoading(false));
-  }, [navigate]);
-
-  // Close email suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (suggestionsRef.current && !suggestionsRef.current.contains(e.target)) {
@@ -67,12 +53,14 @@ export default function Auth() {
     setError("");
     setGoogleLoading(true);
     try {
-      await signInWithRedirect(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider);
+      navigate("/");
     } catch (err) {
-      setGoogleLoading(false);
       if (err.code === "auth/operation-not-allowed")    setError("Google login is not enabled.");
       else if (err.code === "auth/unauthorized-domain") setError("This domain is not authorized.");
       else setError(err.message);
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
