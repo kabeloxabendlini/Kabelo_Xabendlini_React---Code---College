@@ -6,54 +6,59 @@ export default function ProtectedRoute({ user, loading = false, children }) {
   const [redirecting, setRedirecting] = useState(false);
 
   useEffect(() => {
+    // If user is present, cancel any pending redirect immediately
+    if (user) {
+      setRedirecting(false);
+      return;
+    }
+
+    // Only start redirect timer when auth has fully resolved and there's no user
     if (!loading && !user) {
-      // Brief delay so the "redirecting" screen flashes before navigate
-      const t = setTimeout(() => setRedirecting(true), 600);
+      const t = setTimeout(() => setRedirecting(true), 800);
       return () => clearTimeout(t);
     }
   }, [user, loading]);
 
+  // User is signed in — render the page
+  if (user) return children;
+
+  // Redirect timer elapsed — send to auth
   if (redirecting) return <Navigate to="/auth" replace />;
 
-  if (loading || (!user && !redirecting)) {
-    return (
-      <>
-        <style>{css}</style>
-        <div className="pr-shell">
-          <div className="pr-card">
-            {!user && !loading ? (
-              /* About to redirect */
-              <>
-                <div className="pr-icon-wrap amber">
-                  <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                    <circle cx="11" cy="11" r="9" stroke="#e8ff47" strokeWidth="1.6"/>
-                    <path d="M11 7v4.5M11 14.5v.5" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <p className="pr-title">Authentication required</p>
-                <p className="pr-sub">Redirecting you to sign in…</p>
-                <div className="pr-bar"><div className="pr-bar-fill" /></div>
-              </>
-            ) : (
-              /* Auth state still loading */
-              <>
-                <div className="pr-spinner">
-                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                    <circle cx="16" cy="16" r="13" stroke="#222228" strokeWidth="2.5"/>
-                    <circle cx="16" cy="16" r="13" stroke="#e8ff47" strokeWidth="2.5"
-                      strokeDasharray="50" strokeDashoffset="30" strokeLinecap="round"/>
-                  </svg>
-                </div>
-                <p className="pr-title">Checking your session…</p>
-              </>
-            )}
-          </div>
+  // Auth still loading OR brief grace period after popup closes
+  return (
+    <>
+      <style>{css}</style>
+      <div className="pr-shell">
+        <div className="pr-card">
+          {!loading ? (
+            <>
+              <div className="pr-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <circle cx="11" cy="11" r="9" stroke="#e8ff47" strokeWidth="1.6"/>
+                  <path d="M11 7v4.5M11 14.5v.5" stroke="#e8ff47" strokeWidth="1.8" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <p className="pr-title">Authentication required</p>
+              <p className="pr-sub">Redirecting you to sign in…</p>
+              <div className="pr-bar"><div className="pr-bar-fill" /></div>
+            </>
+          ) : (
+            <>
+              <div className="pr-spinner">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="13" stroke="#222228" strokeWidth="2.5"/>
+                  <circle cx="16" cy="16" r="13" stroke="#e8ff47" strokeWidth="2.5"
+                    strokeDasharray="50" strokeDashoffset="30" strokeLinecap="round"/>
+                </svg>
+              </div>
+              <p className="pr-title">Checking your session…</p>
+            </>
+          )}
         </div>
-      </>
-    );
-  }
-
-  return children;
+      </div>
+    </>
+  );
 }
 
 const css = `
@@ -129,7 +134,7 @@ const css = `
     height: 100%;
     background: #e8ff47;
     border-radius: 2px;
-    animation: progress 0.6s cubic-bezier(0.4,0,0.2,1) forwards;
+    animation: progress 0.8s cubic-bezier(0.4,0,0.2,1) forwards;
   }
 
   @keyframes progress {
