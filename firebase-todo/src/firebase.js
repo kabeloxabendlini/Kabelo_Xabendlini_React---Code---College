@@ -11,9 +11,9 @@ import { getFirestore } from "firebase/firestore";
 // These values uniquely identify and connect your app to Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBrKN2jioT_Z0NnSgN2LufhlsFE5r77bbQ", // Public API key for Firebase
-  authDomain: "my-app-vite-5861d.firebaseapp.com", // Auth domain for Firebase Authentication
-  projectId: "my-app-vite-5861d", // Firebase project ID
-  storageBucket: "my-app-vite-5861d.appspot.com", // Cloud Storage bucket
+  authDomain: "fir-todo-b76f4.firebaseapp.com",  // ← should say fir-todo-b76f4
+  projectId: "fir-todo-b76f4",                    // ← should say fir-todo-b76f4
+  storageBucket: "fir-todo-b76f4.appspot.com", // Cloud Storage bucket for file uploads
   messagingSenderId: "303020129074", // Sender ID for Firebase Cloud Messaging
   appId: "1:303020129074:web:9e638b86ecb6398a37352b", // Unique app identifier
   measurementId: "G-38S60FNJV4", // Google Analytics measurement ID
