@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { auth, googleProvider } from "../firebase";
 import { signInWithEmailAndPassword, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function Auth() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const suggestionsRef = useRef(null);
+  const navigate = useNavigate();
 
   const commonEmails = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
 
@@ -20,12 +22,14 @@ export default function Auth() {
   useEffect(() => {
     setGoogleLoading(true);
     getRedirectResult(auth)
-      .then((result) => { /* onAuthStateChanged in App.js handles the signed-in user */ })
+      .then((result) => {
+        if (result) navigate("/");
+      })
       .catch((err) => {
         if (err.code !== "auth/no-auth-event") setError(err.message);
       })
       .finally(() => setGoogleLoading(false));
-  }, []);
+  }, [navigate]);
 
   // Close email suggestions when clicking outside
   useEffect(() => {
@@ -45,6 +49,7 @@ export default function Auth() {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
     } catch (err) {
       switch (err.code) {
         case "auth/invalid-email":         setError("That email address doesn't look right."); break;
