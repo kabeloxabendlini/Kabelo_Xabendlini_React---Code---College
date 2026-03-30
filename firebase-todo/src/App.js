@@ -5,7 +5,6 @@ import { auth } from "./firebase";
 import { signOut } from "firebase/auth";
 
 import Auth from "./components/Auth";
-import Login from "./components/Login";
 import TodoPage from "./components/TodoPage";
 import Projects from "./components/Projects";
 import Profile from "./components/Profile";
@@ -106,7 +105,6 @@ function App() {
           }
         />
         <Route path="/auth" element={<Auth />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </Router>
   );

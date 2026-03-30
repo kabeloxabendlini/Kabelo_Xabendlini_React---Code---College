@@ -1,7 +1,7 @@
 // FILE: src/components/Auth.js
 import React, { useState, useRef, useEffect } from "react";
 import { auth, googleProvider } from "../firebase";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithRedirect, getRedirectResult } from "firebase/auth";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -16,6 +16,18 @@ export default function Auth() {
 
   const commonEmails = ["gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com"];
 
+  // Handle Google redirect result when returning to the app
+  useEffect(() => {
+    setGoogleLoading(true);
+    getRedirectResult(auth)
+      .then((result) => { /* onAuthStateChanged in App.js handles the signed-in user */ })
+      .catch((err) => {
+        if (err.code !== "auth/no-auth-event") setError(err.message);
+      })
+      .finally(() => setGoogleLoading(false));
+  }, []);
+
+  // Close email suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (suggestionsRef.current && !suggestionsRef.current.contains(e.target)) {
@@ -50,13 +62,12 @@ export default function Auth() {
     setError("");
     setGoogleLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithRedirect(auth, googleProvider);
     } catch (err) {
-      if (err.code === "auth/operation-not-allowed")   setError("Google login is not enabled.");
+      setGoogleLoading(false);
+      if (err.code === "auth/operation-not-allowed")    setError("Google login is not enabled.");
       else if (err.code === "auth/unauthorized-domain") setError("This domain is not authorized.");
       else setError(err.message);
-    } finally {
-      setGoogleLoading(false);
     }
   };
 
@@ -85,7 +96,6 @@ export default function Auth() {
       <div className="auth-shell">
         <div className="auth-card">
 
-          {/* Header */}
           <div className="auth-header">
             <div className="auth-logo">
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -97,7 +107,6 @@ export default function Auth() {
             <p className="auth-subtitle">Sign in to continue to your tasks</p>
           </div>
 
-          {/* Google button */}
           <button
             className={`auth-google-btn ${googleLoading ? "loading" : ""}`}
             onClick={handleGoogleLogin}
@@ -123,7 +132,6 @@ export default function Auth() {
             <span>or sign in with email</span>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleLogin} className="auth-form" noValidate>
             <div className={`auth-field-group ${suggestions.length > 0 ? "has-suggestions" : ""}`} ref={suggestionsRef}>
               <div className={`auth-field ${focusedField === "email" ? "focused" : ""} ${email ? "has-value" : ""}`}>
@@ -246,15 +254,8 @@ const css = `
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .auth-header {
-    text-align: center;
-    margin-bottom: 28px;
-  }
-
-  .auth-logo {
-    display: inline-flex;
-    margin-bottom: 16px;
-  }
+  .auth-header { text-align: center; margin-bottom: 28px; }
+  .auth-logo { display: inline-flex; margin-bottom: 16px; }
 
   .auth-title {
     margin: 0 0 6px;
@@ -271,7 +272,6 @@ const css = `
     font-weight: 400;
   }
 
-  /* Google button */
   .auth-google-btn {
     width: 100%;
     display: flex;
@@ -297,12 +297,8 @@ const css = `
     color: #f0f0f2;
   }
 
-  .auth-google-btn.loading {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
+  .auth-google-btn.loading { opacity: 0.6; cursor: not-allowed; }
 
-  /* Divider */
   .auth-divider {
     display: flex;
     align-items: center;
@@ -322,16 +318,8 @@ const css = `
     background: #222226;
   }
 
-  /* Form */
-  .auth-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-
-  .auth-field-group {
-    position: relative;
-  }
+  .auth-form { display: flex; flex-direction: column; gap: 14px; }
+  .auth-field-group { position: relative; }
 
   .auth-field {
     position: relative;
@@ -359,9 +347,7 @@ const css = `
     transition: color 0.2s;
   }
 
-  .auth-field.focused .auth-label {
-    color: #e8ff47;
-  }
+  .auth-field.focused .auth-label { color: #e8ff47; }
 
   .auth-input {
     display: block;
@@ -377,11 +363,8 @@ const css = `
     letter-spacing: -0.01em;
   }
 
-  .auth-input::placeholder {
-    color: #35353d;
-  }
+  .auth-input::placeholder { color: #35353d; }
 
-  /* Eye toggle */
   .auth-eye {
     position: absolute;
     right: 12px;
@@ -397,7 +380,6 @@ const css = `
   }
   .auth-eye:hover { color: #888898; }
 
-  /* Email suggestions */
   .auth-suggestions {
     position: absolute;
     top: calc(100% + 6px);
@@ -431,13 +413,8 @@ const css = `
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
   }
+  .auth-suggestion:hover { background: #252530; color: #e8ff47; }
 
-  .auth-suggestion:hover {
-    background: #252530;
-    color: #e8ff47;
-  }
-
-  /* Error */
   .auth-error {
     display: flex;
     align-items: center;
@@ -451,12 +428,8 @@ const css = `
     animation: fadeIn 0.2s ease;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* Submit */
   .auth-submit-btn {
     display: flex;
     align-items: center;
@@ -484,21 +457,16 @@ const css = `
     box-shadow: 0 6px 24px rgba(232, 255, 71, 0.3);
   }
 
-  .auth-submit-btn:active:not(:disabled) {
-    transform: translateY(0);
-  }
+  .auth-submit-btn:active:not(:disabled) { transform: translateY(0); }
 
-  .auth-submit-btn.loading, .auth-submit-btn:disabled {
+  .auth-submit-btn.loading,
+  .auth-submit-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
   }
 
-  .spin {
-    animation: spin 0.8s linear infinite;
-  }
+  .spin { animation: spin 0.8s linear infinite; }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 `;
